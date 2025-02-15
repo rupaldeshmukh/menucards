@@ -1,0 +1,52 @@
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 200px 200px 200px;
+  }
+  
+
+.card{
+  position: relative;
+  width:300px;
+  background-color: bisque;
+}
+
+.card :hover{
+  height: 500px;
+  width: 500px;
+  transition: 0.5s;
+  z-index: 2;
+}
+
+.face1{
+  position: relative;
+  width: 300px;
+  height: 200px;
+  background-color: aquamarine;
+  border: 1px solid black;
+  transition: 0.5s;
+  /* transform:  translateY(100px); */
+  z-index: 1;
+}
+/* 
+.card:hover .face2{
+  background-color: blueviolet;
+  transform: translateY(0);
+  height: 500px;
+  z-index: 1;
+  width: 500px;
+} */
+/* .card:hover .face1{
+  transform: translateY(0);
+} */
+
+/* .face2{
+  position: relative;
+  width: 300px;
+  height: 300px;
+  background-color: rebeccapurple;
+  transition: 0.5s;
+  transform: translateY(-100px);
+  box-shadow: 0 20px 50px black;
+
+} */
