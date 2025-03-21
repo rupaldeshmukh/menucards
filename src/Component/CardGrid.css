@@ -9,11 +9,13 @@
   position: relative;
   width:300px;
   background-color: bisque;
+  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+
 }
 
 .card :hover{
-  height: 500px;
-  width: 500px;
+  height: 400px;
+  width: 400px;
   transition: 0.5s;
   z-index: 2;
 }
@@ -48,5 +50,4 @@
   transition: 0.5s;
   transform: translateY(-100px);
   box-shadow: 0 20px 50px black;
-
 } */
