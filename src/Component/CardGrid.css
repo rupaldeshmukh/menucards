@@ -2,11 +2,11 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: 200px 200px 200px;
+    width: 500px;
   }
   
 
 .card{
-  position: relative;
   width:300px;
   background-color: bisque;
   transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
@@ -20,7 +20,7 @@
   z-index: 2;
 }
 
-.face1{
+.searchCards{
   position: relative;
   width: 300px;
   height: 200px;
@@ -38,7 +38,7 @@
   z-index: 1;
   width: 500px;
 } */
-/* .card:hover .face1{
+/* .card:hover .searchCards{
   transform: translateY(0);
 } */
 

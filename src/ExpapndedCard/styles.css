@@ -62,6 +62,6 @@ body {
   .card-6:hover {
     width: 220px;
     height: 220px;
-    transform-origin: bottom right;
+    transform-origin: 50 50%;
   }
   

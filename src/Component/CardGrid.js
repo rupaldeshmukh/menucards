@@ -12,7 +12,7 @@ const CardGrid = () => {
     <div className="card-grid">
       {cards.map((card) => (
         <div key={card.id} className="card">
-          <div className="face1">
+          <div className="searchCards">
             <h3 className="card-title">{card.title}</h3>
             <div className="face2">
             <p className="card-description">
