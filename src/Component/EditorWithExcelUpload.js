@@ -32,8 +32,7 @@ const EditorWithExcelUpload = () => {
   }, []);
 
   return (
-    <div style={{ margin: '20px' }}>
-      <h4>Rich Text Editor</h4>
+    <div>
       <div ref={editorRef} />
     </div>
   );
