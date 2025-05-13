@@ -1,10 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import 'summernote/dist/summernote-lite.css';
 import 'summernote/dist/summernote-lite.js';
 
-const EditorWithExcelUpload = () => {
+const EditorWithExcelUpload = ({ initialDescription = '' }) => {
   const editorRef = useRef(null);
+  const [formData, setFormData] = useState({
+    description: initialDescription || ''
+  });
 
   useEffect(() => {
     const $editor = $(editorRef.current);
@@ -22,9 +25,18 @@ const EditorWithExcelUpload = () => {
             });
           };
           reader.readAsDataURL(files[0]);
+        },
+        onChange: (contents) => {
+          setFormData((prev) => ({
+            ...prev,
+            description: contents
+          }));
         }
       }
     });
+
+    // Set initial content if any
+    $editor.summernote('code', formData.description);
 
     return () => {
       $editor.summernote('destroy');
@@ -32,8 +44,11 @@ const EditorWithExcelUpload = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ margin: '20px' }}>
+      <h4>Rich Text Editor</h4>
       <div ref={editorRef} />
+      {/* For debugging or future use */}
+      {/* <div dangerouslySetInnerHTML={{ __html: formData.description }} /> */}
     </div>
   );
 };
