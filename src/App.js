@@ -6,6 +6,7 @@ import TextEditor from './Component/TextEditor.js';
 import NameDropdown from './Component/NameDropdown.js';
 import Quill from 'quill';
 import SimpleEditor from './Component/SimpleEditor.js';
+import EditorWithExcelUpload from './Component/EditorWithExcelUpload.js';
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
 {/* <TextEditor/> */}
 {/* <NameDropdown/> */}
 <SimpleEditor/>
+<h1> Second </h1>
+<EditorWithExcelUpload/>
+
 </>
   );
 }
