@@ -25,30 +25,41 @@ const EditorWithExcelUpload = ({ initialDescription = '' }) => {
             });
           };
           reader.readAsDataURL(files[0]);
-        },
-        onChange: (contents) => {
-          setFormData((prev) => ({
-            ...prev,
-            description: contents
-          }));
         }
       }
     });
 
-    // Set initial content if any
-    $editor.summernote('code', formData.description);
+    // Load initial HTML
+    $editor.summernote('code', initialDescription);
+
+    // Listen for blur (save HTML instead of plain text)
+    $editor.on('summernote.blur', () => {
+      const html = $editor.summernote('code');
+      setFormData((prev) => ({ ...prev, description: html }));
+    });
+
+    // Listen for paste (to manually extract HTML if present)
+    $editor.on('paste', (e) => {
+      const clipboardData = e.originalEvent.clipboardData;
+      if (clipboardData && clipboardData.types.includes('text/html')) {
+        e.preventDefault(); // prevent default paste
+
+        const htmlData = clipboardData.getData('text/html');
+        $editor.summernote('pasteHTML', htmlData);
+      }
+    });
 
     return () => {
       $editor.summernote('destroy');
     };
-  }, []);
+  }, [initialDescription]);
 
   return (
     <div style={{ margin: '20px' }}>
       <h4>Rich Text Editor</h4>
       <div ref={editorRef} />
-      {/* For debugging or future use */}
-      {/* <div dangerouslySetInnerHTML={{ __html: formData.description }} /> */}
+      {/* For testing: */}
+      {/* <pre>{formData.description}</pre> */}
     </div>
   );
 };
