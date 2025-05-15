@@ -7,6 +7,7 @@ import NameDropdown from './Component/NameDropdown.js';
 import Quill from 'quill';
 import SimpleEditor from './Component/SimpleEditor.js';
 import EditorWithExcelUpload from './Component/EditorWithExcelUpload.js';
+import HtmlEditorsDemo from './Component/HtmlEditorsDemo.js';
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
 <SimpleEditor/>
 <h1> Second </h1>
 <EditorWithExcelUpload/>
+<h1>Demo</h1>
+<HtmlEditorsDemo/>
 
 </>
   );
