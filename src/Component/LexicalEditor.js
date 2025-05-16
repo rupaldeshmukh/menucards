@@ -184,3 +184,5 @@ export default function LexicalEditor() {
     </>
   );
 }
+
+// npm install lexical @lexical/react @lexical/rich-text @lexical/history @lexical/html @lexical/table
