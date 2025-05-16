@@ -1,120 +1,74 @@
-// src/Component/LexicalEditorWithToolbar.js
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-
-import {
-  $generateHtmlFromNodes,
-} from "@lexical/html";
-
-// Import at top
+import { $generateHtmlFromNodes } from "@lexical/html";
 import {
   $getSelection,
   $isRangeSelection,
   FORMAT_TEXT_COMMAND,
   FORMAT_ELEMENT_COMMAND,
+  COMMAND_PRIORITY_EDITOR,
 } from "lexical";
-
-
 import {
   TableNode,
   TableCellNode,
   TableRowNode,
 } from "@lexical/table";
 
-import { $createParagraphNode } from "lexical";
-
-
-// Editor config with table nodes
 const editorConfig = {
   namespace: "MyEditor",
-  onError: (error) => {
-    console.error(error);
-  },
+  onError: (error) => console.error(error),
   nodes: [TableNode, TableCellNode, TableRowNode],
 };
 
+// Replace this with your real image upload logic
+async function uploadImageToServer(file) {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await fetch("https://api.imgbb.com/1/upload?key=YOUR_API_KEY", {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await response.json();
+  return data.data.url; // return uploaded image URL
+}
+
 function Toolbar() {
   const [editor] = useLexicalComposerContext();
+  const [blockType, setBlockType] = useState("paragraph");
   const [isBold, setBold] = useState(false);
   const [isItalic, setItalic] = useState(false);
   const [isUnderline, setUnderline] = useState(false);
-  const [blockType, setBlockType] = useState("paragraph");
 
-  const changeBlockType = (blockType) => {
-    editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, blockType);
-    };
-
-
-  // Update toolbar buttons state based on selection
   useEffect(() => {
     return editor.registerUpdateListener(() => {
       editor.getEditorState().read(() => {
         const selection = $getSelection();
-        if (!$isRangeSelection(selection)) {
-          setBold(false);
-          setItalic(false);
-          setUnderline(false);
-          setBlockType("paragraph");
-          return;
-        }
-        setBold(selection.hasFormat("bold"));
-        setItalic(selection.hasFormat("italic"));
-        setUnderline(selection.hasFormat("underline"));
-
-        const anchor = selection.anchor.getNode();
-        const parent = anchor.getKey ? anchor.getParent() : null;
-        if (parent) {
-          const type = parent.getType();
-          setBlockType(type);
-        } else {
-          setBlockType("paragraph");
+        if ($isRangeSelection(selection)) {
+          setBold(selection.hasFormat("bold"));
+          setItalic(selection.hasFormat("italic"));
+          setUnderline(selection.hasFormat("underline"));
+          const anchor = selection.anchor.getNode();
+          const parent = anchor.getParent();
+          setBlockType(parent?.getType?.() || "paragraph");
         }
       });
     });
   }, [editor]);
 
-  // Handlers to toggle formats
-  const toggleFormat = (format) => {
-    editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
-  };
-
-
   return (
     <div className="toolbar mb-2 space-x-2 border-b border-gray-300 p-2 bg-gray-50 rounded">
-      <button
-        onClick={() => toggleFormat("bold")}
-        className={isBold ? "font-bold text-blue-600" : ""}
-        type="button"
-        aria-label="Bold"
-      >
-        <b>B</b>
-      </button>
-      <button
-        onClick={() => toggleFormat("italic")}
-        className={isItalic ? "italic text-blue-600" : ""}
-        type="button"
-        aria-label="Italic"
-      >
-        <i>I</i>
-      </button>
-      <button
-        onClick={() => toggleFormat("underline")}
-        className={isUnderline ? "underline text-blue-600" : ""}
-        type="button"
-        aria-label="Underline"
-      >
-        <u>U</u>
-      </button>
-
-      {/* Block types */}
+      <button onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")} className={isBold ? "font-bold text-blue-600" : ""}><b>B</b></button>
+      <button onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")} className={isItalic ? "italic text-blue-600" : ""}><i>I</i></button>
+      <button onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")} className={isUnderline ? "underline text-blue-600" : ""}><u>U</u></button>
       <select
         value={blockType}
-        onChange={(e) => changeBlockType(e.target.value)}
-        aria-label="Block type"
+        onChange={(e) => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, e.target.value)}
         className="border rounded p-1"
       >
         <option value="paragraph">Normal</option>
@@ -125,8 +79,7 @@ function Toolbar() {
   );
 }
 
-// Paste image as base64 HTML
-function ImagePasteHandler() {
+function ImageUploadPlugin() {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
@@ -143,27 +96,19 @@ function ImagePasteHandler() {
             event.preventDefault();
             const file = item.getAsFile();
 
-            const reader = new FileReader();
-            reader.onload = () => {
-              const dataUrl = reader.result;
+            uploadImageToServer(file).then((imageUrl) => {
               editor.update(() => {
-                const htmlString = `<img src="${dataUrl}" alt="pasted-image" style="max-width:100%;"/>`;
-                editor.dispatchCommand(
-                  // @ts-ignore
-                  "INSERT_HTML_COMMAND",
-                  htmlString
-                );
+                const html = `<img src="${imageUrl}" alt="pasted-img" style="max-width:100%;" />`;
+                editor.dispatchCommand("INSERT_HTML_COMMAND", html);
               });
-            };
-            reader.readAsDataURL(file);
+            });
 
             return true;
           }
         }
-
         return false;
       },
-      0
+      COMMAND_PRIORITY_EDITOR
     );
 
     return unregister;
@@ -187,28 +132,26 @@ function HTMLExporter({ setHtml }) {
   return null;
 }
 
-const style = `
-  .editor-container table,
-  .editor-container th,
-  .editor-container td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    padding: 6px;
-  }
-  .toolbar button {
-    cursor: pointer;
-    border: 1px solid transparent;
-    background: transparent;
-    padding: 4px 8px;
-    border-radius: 3px;
-  }
-  .toolbar button:hover {
-    background: #e5e7eb;
-  }
-`;
-
-export default function LexicalEditorWithToolbar() {
+export default function LexicalEditor() {
   const [htmlOutput, setHtmlOutput] = useState("");
+
+  const style = `
+    .editor-container table, .editor-container th, .editor-container td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 6px;
+    }
+    .toolbar button {
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      padding: 4px 8px;
+      border-radius: 3px;
+    }
+    .toolbar button:hover {
+      background: #e5e7eb;
+    }
+  `;
 
   return (
     <>
@@ -227,16 +170,13 @@ export default function LexicalEditorWithToolbar() {
             ErrorBoundary={({ error }) => <div>Error: {error.message}</div>}
           />
           <HistoryPlugin />
-          <ImagePasteHandler />
+          <ImageUploadPlugin />
           <HTMLExporter setHtml={setHtmlOutput} />
         </LexicalComposer>
 
         <div className="mt-6">
-          <h3 className="font-semibold mb-2">HTML Output with Borders:</h3>
-          <pre
-            className="bg-gray-100 p-4 rounded whitespace-pre-wrap max-h-[300px] overflow-auto"
-            style={{ whiteSpace: "pre-wrap" }}
-          >
+          <h3 className="font-semibold mb-2">HTML Output:</h3>
+          <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap max-h-[300px] overflow-auto">
             {htmlOutput}
           </pre>
         </div>
