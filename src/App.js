@@ -10,6 +10,8 @@ import EditorWithExcelUpload from './Component/EditorWithExcelUpload.js';
 import HtmlEditorsDemo from './Component/HtmlEditorsDemo.js';
 import EditorJsWithTableAndImage from './Component/EditorJsWithTableAndImage.js';
 import LexicalEditor from './Component/LexicalEditor.js';
+import TinyHtmlEditor from './Component/TinyHtmlEditor.js';
+import QuillHtmlEditor from './Component/QuillHtmlEditor.js';
 
 function App() {
   return (
@@ -22,11 +24,15 @@ function App() {
 {/* <h1> Second </h1> */}
 {/* <EditorWithExcelUpload/> */}
 {/* <h1>Demo</h1> */}
-{/* <HtmlEditorsDemo/> */}
+<HtmlEditorsDemo/>
 {/*  */}
 {/* <EditorJsWithTableAndImage/> */}
-Lexical
-<LexicalEditor/>
+{/* Lexical */}
+{/* <LexicalEditor/> */}
+tiny
+{/* <TinyHtmlEditor/> */}
+quill
+{/* <QuillHtmlEditor/> */}
 
 
 </>
